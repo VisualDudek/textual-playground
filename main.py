@@ -1,9 +1,16 @@
-import datetime  # For data parsing
+import datetime
+import os  # For data parsing
 
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.widgets import Header, Footer, ListView, ListItem, Label, Markdown
 from textual.reactive import reactive
+
+from dotenv import load_dotenv
+
+from pymongo import MongoClient
+from pymongo.server_api import ServerApi
+
 
 # ObjectId class needs to be defined if it's used in the 'data' variable
 # If ObjectId is not part of a standard library and was only for data.txt parsing context,
@@ -16,105 +23,39 @@ class ObjectId:
         return f"ObjectId(\'{self.id_val}\')"
     def __str__(self):
         return self.id_val
+    
+# Load environment variables from .env file
+load_dotenv()
 
-data = (
-    {
-    '_id': 'Visual Studio Code',
-    'latest_videos': [
-        {
-            '_id': ObjectId('6826ceeae93db3c2a51c4abf'),
-            'title': 'Our #1 tip for editing code',
-            'video_id': 'ftlvuxm9BVY',
-            'published_at': datetime.datetime(2025, 5, 15, 20, 15, 24),
-            'channel_id': 'UCs5Y5_7XK8HLDX0SLNwkd3w',
-            'channel_title': 'Visual Studio Code'
-        },
-        {
-            '_id': ObjectId('6826ceeae93db3c2a51c4ac0'),
-            'title': 'BYOK in VS Code',
-            'video_id': 'tqoGDAAfSWc',
-            'published_at': datetime.datetime(2025, 5, 15, 14, 1, 24),
-            'channel_id': 'UCs5Y5_7XK8HLDX0SLNwkd3w',
-            'channel_title': 'Visual Studio Code'
-        },
-        {
-            '_id': ObjectId('6826ceeae93db3c2a51c4ac2'),
-            'title': 'Vibe Coding at Microsoft Build - Day 3',
-            'video_id': 'y4r6I2_Yk7c',
-            'published_at': datetime.datetime(2025, 5, 15, 3, 48, 20),
-            'channel_id': 'UCs5Y5_7XK8HLDX0SLNwkd3w',
-            'channel_title': 'Visual Studio Code'
-        }
-    ]
-},
-{
-    '_id': 'James Montemagno',
-    'latest_videos': [
-        {
-            '_id': ObjectId('6825e5493381dd7b37bc15cc'),
-            'title': 'Visual Studio 2022 + Copilot Agent Mode + Model Context Protocol (MCP) Servers Are Here!',
-            'video_id': 'oPFecZHBCkg',
-            'published_at': datetime.datetime(2025, 5, 14, 13, 1, 33),
-            'channel_id': 'UCENTmbKaTphpWV2R2evVz2A',
-            'channel_title': 'James Montemagno'
-        },
-        {
-            '_id': ObjectId('6825e5493381dd7b37bc15cd'),
-            'title': 'A Powerhouse PC for under $600?! MINISFORUM UM880 Plus Mini PC - Ryzen 7, 1TB SSD, 32GB RAM!',
-            'video_id': 'WRF_rOh4vLE',
-            'published_at': datetime.datetime(2025, 5, 9, 13, 30, 19),
-            'channel_id': 'UCENTmbKaTphpWV2R2evVz2A',
-            'channel_title': 'James Montemagno'
-        },
-        {
-            '_id': ObjectId('6825e5493381dd7b37bc15ce'),
-            'title': 'The Best Mac Mini M4 Accessory? Pulwtop Hub &amp; Dock Hands-On Review - M.2 SSD, HDMI, &amp; USB!',
-            'video_id': 'dnn0Bid9C88',
-            'published_at': datetime.datetime(2025, 4, 29, 14, 0, 55),
-            'channel_id': 'UCENTmbKaTphpWV2R2evVz2A',
-            'channel_title': 'James Montemagno'
-        }
-    ]
-},
-{
-    '_id': 'GitHub',
-    'latest_videos': [
-        {
-            '_id': ObjectId('6826d4ebc2abab02b8603406'),
-            'title': 'Event in Spanish: Jueves de Quack: Especial VS Code y GitHub Copilot',
-            'video_id': '2sckM3X4bCI',
-            'published_at': datetime.datetime(2025, 5, 16, 4, 14, 12),
-            'channel_id': 'UC7c3Kb6jYCRj4JOHHZTxKsQ',
-            'channel_title': 'GitHub',
-            'url': 'https://www.youtube.com/watch?v=2sckM3X4bCI',
-            'duration': 'PT1H5M34S',
-            'view_count': '229'
-        },
-        {
-            '_id': ObjectId('6826d4ebc2abab02b8603407'),
-            'title': 'Rubber Duck Thursdays - Building from requirements with Agent Mode',
-            'video_id': 'pOr5nJ_XVDE',
-            'published_at': datetime.datetime(2025, 5, 15, 23, 37, 15),
-            'channel_id': 'UC7c3Kb6jYCRj4JOHHZTxKsQ',
-            'channel_title': 'GitHub',
-            'url': 'https://www.youtube.com/watch?v=pOr5nJ_XVDE',
-            'duration': 'PT1H59M18S',
-            'view_count': '712'
-        },
-        {
-            '_id': ObjectId('6826d4ebc2abab02b8603408'),
-            'title': "How GitHub Copilot empowers anyone to make apps | Kelly Ford's journey",
-            'video_id': 'heubNV-QtuI',
-            'published_at': datetime.datetime(2025, 5, 15, 16, 47, 4),
-            'channel_id': 'UC7c3Kb6jYCRj4JOHHZTxKsQ',
-            'channel_title': 'GitHub',
-            'url': 'https://www.youtube.com/watch?v=heubNV-QtuI',
-            'duration': 'PT2M3S',
-            'view_count': '382'
-        }
-    ]
-}
-)
+# --- MongoDB Configuration ---
+MONGO_URI = os.getenv("MONGO_URI")
+MONGO_DATABASE_NAME = "youtube_data" 
+MONGO_COLLECTION_NAME = "videos"     
+
+# --- MongoDB Setup ---
+mongo_client = None
+video_collection = None
+try:
+    print(f"Connecting to MongoDB at {MONGO_URI}...")
+    mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000, server_api= ServerApi('1')) # Timeout for connection
+    # Ping to confirm connection
+    mongo_client.admin.command('ping') 
+    print("Successfully connected to MongoDB.")
+    
+    db = mongo_client[MONGO_DATABASE_NAME]
+    video_collection = db[MONGO_COLLECTION_NAME]
+
+except Exception as e:
+    print(f"Error: Could not connect to MongoDB or set up collection: {e}")
+    print("Please ensure MongoDB is running and accessible, and MONGO_URI is correct.")
+    exit(1) # Exit if DB connection fails, as storing data is a key goal.
+
+
+# print("\n--- Fetching data from MongoDB View ---")
+# for doc in db.latest_three.find():
+
+# --- Fetch data from MongoDB View ---
+data = (doc for doc in db.latest_ten.find())
 
 # --- Data Loading Logic ---
 # Removed load_data_from_file function
@@ -192,21 +133,21 @@ class VideoViewerApp(App):
         if videos:
             for video in videos:
                 title = video.get('title', 'No Title')
-                video_id = video.get('video_id', 'N/A')
                 published_at = video.get('published_at', 'N/A')
-                
+                video_duration = video.get('duration', 'N/A')
+
+                # Convert published_at to a string if it's a datetime object
+
                 if isinstance(published_at, datetime.datetime):
                     published_at_str = published_at.strftime("%Y-%m-%d %H:%M:%S")
+                    published_at_short = published_at.strftime("%Y-%m-%d")
                 else:
                     published_at_str = str(published_at)
+                    published_at_short = str(published_at)
 
-                details_md += f"## {title}\n"
-                # details_md += f"- **Video ID:** {video_id}\n"
-                video_duration = video.get('duration', 'N/A')
-                details_md += f"- **Published:** {published_at_str}  **Duration:** {video_duration}\n"
-                if 'url' in video:
-                    details_md += f"- **URL:** [{video.get('url')}]({video.get('url')})\n"
-                details_md += "---\n"
+                details_md += f"- {published_at_short} [{title}](https://www.youtube.com/watch?v={video.get('video_id', 'N/A')})"
+                details_md += f" **Duration:** {video_duration}\n"
+
         else:
             details_md += "No videos found for this channel."
         
@@ -222,5 +163,7 @@ class VideoViewerApp(App):
 
 
 if __name__ == "__main__":
+
+
     app = VideoViewerApp() # Instantiate without data_filepath
     app.run()
