@@ -1,6 +1,7 @@
 import datetime
 import os  # For data parsing
 
+from textual import work
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.widgets import Header, Footer, ListView, ListItem, Label, Markdown
@@ -117,6 +118,7 @@ class VideoViewerApp(App):
             if isinstance(first_item, ChannelListItem):
                 self.call_later(self._update_video_details_for_item, first_item)
 
+    @work(exclusive=True)
     async def _update_video_details_for_item(self, item: ChannelListItem | None) -> None: # Allow item to be None
         """Updates the right pane with video details for the given channel item."""
         if not item: # Handle case where no item is highlighted (e.g., empty list)
@@ -157,7 +159,8 @@ class VideoViewerApp(App):
     async def on_list_view_highlighted(self, event: ListView.Highlighted) -> None: # Changed from on_list_view_selected
         """Called when an item in the ListView is highlighted.""" # Docstring updated
         if isinstance(event.item, ChannelListItem):
-            await self._update_video_details_for_item(event.item)
+            # await self._update_video_details_for_item(event.item)
+            self._update_video_details_for_item(event.item)
         elif event.item is None: # Handle case where highlighting is removed (e.g. list becomes empty or loses focus)
              await self._update_video_details_for_item(None)
 
