@@ -176,8 +176,13 @@ class VideoViewerApp(App):
             if isinstance(first_item, ChannelListItem):
                 self.call_later(self._update_video_details_for_item, first_item)
 
-    async def _update_video_details_for_item(self, item: ChannelListItem) -> None:
+    async def _update_video_details_for_item(self, item: ChannelListItem | None) -> None: # Allow item to be None
         """Updates the right pane with video details for the given channel item."""
+        if not item: # Handle case where no item is highlighted (e.g., empty list)
+            if self.video_details_pane:
+                await self.video_details_pane.update("No item selected.")
+            return
+
         selected_channel_data = item.channel_data
         videos = selected_channel_data.get('latest_videos', [])
         
@@ -209,10 +214,13 @@ class VideoViewerApp(App):
         if self.video_details_pane:
             await self.video_details_pane.update(details_md)
 
-    async def on_list_view_selected(self, event: ListView.Selected) -> None:
-        """Called when an item in the ListView is selected."""
+    async def on_list_view_highlighted(self, event: ListView.Highlighted) -> None: # Changed from on_list_view_selected
+        """Called when an item in the ListView is highlighted.""" # Docstring updated
         if isinstance(event.item, ChannelListItem):
             await self._update_video_details_for_item(event.item)
+        elif event.item is None: # Handle case where highlighting is removed (e.g. list becomes empty or loses focus)
+             await self._update_video_details_for_item(None)
+
 
 if __name__ == "__main__":
     app = VideoViewerApp() # Instantiate without data_filepath
