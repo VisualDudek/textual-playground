@@ -9,14 +9,14 @@ Screen {
 }
 
 #left_pane {
-    width: 30%; /* Adjust width as needed */
+    width: 15%; /* Adjust width as needed */
     height: 100%;
     border-right: solid $primary-background-lighten-2;
     overflow-y: auto;
 }
 
 #right_pane {
-    width: 70%; /* Adjust width as needed */
+    width: 85%; /* Adjust width as needed */
     height: 100%;
     padding: 1;
     overflow-y: auto;
