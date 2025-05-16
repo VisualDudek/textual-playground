@@ -1,0 +1,61 @@
+/* style.tcss */
+Screen {
+    layout: vertical;
+}
+
+#main_container {
+    layout: horizontal;
+    height: 1fr; /* Take remaining vertical space */
+}
+
+#left_pane {
+    width: 30%; /* Adjust width as needed */
+    height: 100%;
+    border-right: solid $primary-background-lighten-2;
+    overflow-y: auto;
+}
+
+#right_pane {
+    width: 70%; /* Adjust width as needed */
+    height: 100%;
+    padding: 1;
+    overflow-y: auto;
+}
+
+#channel_list_view {
+    width: 100%;
+    height: 100%;
+}
+
+#video_details_pane {
+    width: 100%;
+    height: 100%;
+}
+
+/* Styling for ListView items for better visual feedback */
+ListView > ListItem.--highlight {
+    background: $accent;
+    color: $text;
+}
+
+ListView > ListItem.--selected {
+    background: $primary-background-lighten-1;
+}
+
+Markdown {
+    /* Add specific styling for Markdown content if needed */
+}
+
+Header {
+    dock: top;
+    background: $primary;
+    color: $text;
+    padding: 0 1;
+}
+
+Footer {
+    dock: bottom;
+    background: $primary;
+    color: $text;
+    padding: 0 1;
+}
