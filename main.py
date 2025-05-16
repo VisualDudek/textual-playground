@@ -182,7 +182,7 @@ class VideoViewerApp(App):
         videos = selected_channel_data.get('latest_videos', [])
         
         channel_id_str = str(selected_channel_data.get('_id', 'Unknown Channel'))
-        details_md = f"# {channel_id_str}\\n\\n"
+        details_md = f"# {channel_id_str}\n\n"
         
         if videos:
             for video in videos:
@@ -195,16 +195,14 @@ class VideoViewerApp(App):
                 else:
                     published_at_str = str(published_at)
 
-                details_md += f"## {title}\\n"
-                details_md += f"- **Video ID:** {video_id}\\n"
-                details_md += f"- **Published:** {published_at_str}\\n"
+                details_md += f"## {title}\n"
+                # details_md += f"- **Video ID:** {video_id}\n"
+                details_md += f"- **Published:** {published_at_str}\n"
                 if 'url' in video:
-                    details_md += f"- **URL:** [{video.get('url')}]({video.get('url')})\\n"
+                    details_md += f"- **URL:** [{video.get('url')}]({video.get('url')})\n"
                 if 'duration' in video:
-                    details_md += f"- **Duration:** {video.get('duration')}\\n"
-                if 'view_count' in video:
-                    details_md += f"- **Views:** {video.get('view_count')}\\n"
-                details_md += "\\n---\\n"
+                    details_md += f"- **Duration:** {video.get('duration')}\n"
+                details_md += "---\n"
         else:
             details_md += "No videos found for this channel."
         
