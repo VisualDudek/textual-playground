@@ -1,0 +1,108 @@
+/* boilerplate.tcss */
+
+/* Screen is the root container for the application. */
+/* Styles applied here affect the overall app window. */
+Screen {
+    /* `layout: vertical` arranges child widgets (Header, VerticalScroll, Footer)
+       from top to bottom. This is often the default for Screen. */
+    layout: vertical;
+    /* `overflow: hidden hidden;` can prevent unexpected scrollbars at the screen level.
+       Typically, scrolling is managed by inner containers like VerticalScroll. */
+    overflow: hidden hidden;
+    /* `background: $surface;` uses a Textual system color for the background.
+       System colors adapt to light/dark mode. */
+    background: $surface;
+}
+
+/* Style the Header widget. */
+Header {
+    /* `dock: top;` fixes the Header to the top of its parent (the Screen).
+       Docked widgets are laid out first and take up space along the edge. */
+    dock: top;
+    /* `background: $primary-background;` sets a distinct background for the header. */
+    background: $primary-background;
+    /* `color: $text;` sets the text color. */
+    color: $text;
+}
+
+/* Style the Footer widget. */
+Footer {
+    /* `dock: bottom;` fixes the Footer to the bottom of its parent (the Screen). */
+    dock: bottom;
+    /* `background: $primary-background-darken-2;` uses a darker shade for the footer. */
+    background: $primary-background-darken-2;
+    color: $text-muted; /* Muted text color for less emphasis. */
+}
+
+/* Style the VerticalScroll container with id 'main_content'. */
+/* The '#' prefix targets a widget by its ID. */
+#main_content {
+    /* `padding: 1 2;` adds padding around the content within this container.
+       (1 row top/bottom, 2 columns left/right). */
+    padding: 1 2;
+    /* `width: 100%;` ensures it takes the full available width. */
+    width: 100%;
+    /* `height: 1fr;` makes this container take up 1 fraction of the remaining
+       vertical space after Header and Footer are docked. This is key for
+       making the content area fill the available space. */
+    height: 1fr;
+    /* `background: $panel;` sets a background for the content area. */
+    background: $panel;
+}
+
+/* Style the Static widget with id 'welcome_message'. */
+#welcome_message {
+    /* `width: 100%;` ensures full width. */
+    width: 100%;
+    /* `text-align: center;` centers the text within the widget. */
+    text-align: center;
+    /* `margin-bottom: 1;` adds some space below this widget. */
+    margin-bottom: 1;
+    /* `text-style: bold;` makes the text bold. */
+    text-style: bold;
+}
+
+/* Style all Input widgets. */
+Input {
+    /* `width: 100%;` makes input fields take the full available width. */
+    width: 100%;
+    /* `margin-bottom: 1;` adds space below each input field. */
+    margin-bottom: 1;
+    /* `border: round $primary;` adds a rounded border with the primary color. */
+    border: round $primary;
+}
+
+/* Style all Button widgets. */
+Button {
+    /* `width: 100%;` makes buttons span the full width of their container. */
+    width: 100%;
+    /* `margin: 1 0;` adds vertical margin (1 row top/bottom, 0 columns left/right). */
+    margin: 1 0;
+}
+
+/* Style Button widgets with the 'primary' variant. */
+/* This targets buttons like <Button variant="primary">. */
+Button.-primary {
+    /* `background: $success;` uses a system color typically for success/confirmation. */
+    background: $success;
+    /* `color: $text-primary;` ensures good contrast for text on this background. */
+    color: $text-primary;
+}
+
+/* Style the Static widget with id 'output_area'. */
+#output_area {
+    /* `width: 100%;` full width. */
+    width: 100%;
+    /* `height: auto;` allows the widget to grow in height based on its content. */
+    height: auto;
+    /* `min-height: 3;` ensures it has at least some visible height even when empty. */
+    min-height: 3;
+    /* `padding: 1;` adds padding inside the output area. */
+    padding: 1;
+    /* `margin-top: 1;` adds space above it. */
+    margin-top: 1;
+    /* `border: round $accent;` adds a border to make it distinct. */
+    border: round $accent;
+    /* `background: $primary-background-lighten-2;` a slightly lighter background. */
+    background: $primary-background-lighten-2;
+}
