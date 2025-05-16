@@ -202,11 +202,10 @@ class VideoViewerApp(App):
 
                 details_md += f"## {title}\n"
                 # details_md += f"- **Video ID:** {video_id}\n"
-                details_md += f"- **Published:** {published_at_str}\n"
+                video_duration = video.get('duration', 'N/A')
+                details_md += f"- **Published:** {published_at_str}  **Duration:** {video_duration}\n"
                 if 'url' in video:
                     details_md += f"- **URL:** [{video.get('url')}]({video.get('url')})\n"
-                if 'duration' in video:
-                    details_md += f"- **Duration:** {video.get('duration')}\n"
                 details_md += "---\n"
         else:
             details_md += "No videos found for this channel."
