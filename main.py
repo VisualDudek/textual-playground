@@ -74,7 +74,8 @@ class VideoViewerApp(App):
     CSS_PATH = "style.tcss"  # Path to the CSS file
 
     BINDINGS = [
-        ("q", "quit", "Quit")
+        ("q", "quit", "Quit"),
+        ("r", "refresh_db", "Refresh DB"),  # Refresh data
     ]
 
     video_details_content = reactive("") # For right pane
@@ -118,6 +119,35 @@ class VideoViewerApp(App):
             if isinstance(first_item, ChannelListItem):
                 self.call_later(self._update_video_details_for_item, first_item)
 
+    def action_refresh_db(self) -> None:
+        """Refresh the database connection and data."""
+        global mongo_client, video_collection, data
+        try:
+            print(f"Reconnecting to MongoDB at {MONGO_URI}...")
+            mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000, server_api= ServerApi('1'))
+            mongo_client.admin.command('ping')
+            print("Successfully reconnected to MongoDB.")
+            
+            db = mongo_client[MONGO_DATABASE_NAME]
+            video_collection = db[MONGO_COLLECTION_NAME]
+            data = (doc for doc in db.latest_ten.find())
+            self.all_data = list(data)  # Update the all_data variable
+            print("Data refreshed from MongoDB.")
+        except Exception as e:
+            print(f"Error: Could not reconnect to MongoDB or set up collection: {e}")
+            print("Please ensure MongoDB is running and accessible, and MONGO_URI is correct.")
+            exit(1)
+
+        # Close teh MongoDB connection
+        if mongo_client:
+            mongo_client.close()
+            print("MongoDB connection closed.")
+        # Re-mount the app to refresh the data
+        # self.on_mount() # Re-mounting is not necessary; we can just refresh the data
+        # Re-render the app to show the updated data
+        self.refresh()  # Refresh the app to show the updated data
+
+        
     @work(exclusive=True)
     async def _update_video_details_for_item(self, item: ChannelListItem | None) -> None: # Allow item to be None
         """Updates the right pane with video details for the given channel item."""
