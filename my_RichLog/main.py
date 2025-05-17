@@ -58,6 +58,13 @@ class RichLogBoilerplateApp(App):
             (" to add a basic log entry.")
         ))
 
+    async def on_ready(self) -> None:
+        """Called when the app is ready."""
+        log_widget = self.query_one(RichLog)
+        log_widget.write("App is ready!")
+        await asyncio.sleep(1)  # Simulate some delay for demonstration
+        log_widget.write("App is ready!")
+
     async def action_add_log_entry(self) -> None:
         """Add a simple text log entry."""
         log_widget = self.query_one(RichLog)

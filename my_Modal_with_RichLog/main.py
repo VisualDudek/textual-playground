@@ -28,15 +28,16 @@ class PopupScreen(ModalScreen):
         log_widget.write("Welcome to the RichLog Boilerplate App!")
         log_widget.write(f"Current time: {datetime.now().isoformat()}")
         log_widget.write("--- Press key bindings to add more entries ---")
-        log_widget.write(Text.assemble(
-            ("Tip: ", "bold cornflower_blue"),
-            ("Use ", "default"),
-            ("Ctrl+L", "bold green"),
-            (" to add a basic log entry.")
-        ))
-        log_widget.refresh()  # Ensure the log is displayed immediately
-        await asyncio.sleep(1)  # Simulate some delay for demonstration
         log_widget.write("This is a new log entry.")
+
+    async def on_ready(self) -> None:
+        """Called when the app is ready."""
+        log_widget = self.query_one(RichLog)
+        log_widget.write("App is ready!")
+        await asyncio.sleep(1)
+        log_widget.write("App is ready!")
+        await asyncio.sleep(1)
+        log_widget.write("App is ready!")
 
 class MainApp(App):
     """Main application class."""
@@ -65,7 +66,7 @@ class MainApp(App):
         yield Static("Press 'p' to open the popup.")
         yield Footer()
 
-    def action_request_popup(self) -> None:
+    async def action_request_popup(self) -> None:
         """Open the popup screen."""
         self.push_screen(PopupScreen())
 
