@@ -6,6 +6,8 @@ from rich.syntax import Syntax
 from rich.table import Table
 from datetime import datetime
 
+import asyncio
+
 class RichLogBoilerplateApp(App):
     """
     A boilerplate Textual application to demonstrate RichLog.
