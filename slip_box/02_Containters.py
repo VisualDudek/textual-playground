@@ -8,7 +8,7 @@ This script demonstrates:
 """
 
 from textual.app import App, ComposeResult
-from textual.widgets import Header, Label
+from textual.widgets import Header, Label, Footer
 from textual.containers import Horizontal
 
 
@@ -17,6 +17,7 @@ class ContainerApp(App):
 
     def compose(self):
         yield Header()
+        yield Footer()
         with Horizontal(id="main_container"):
             yield Label("Hello, World!")
             yield Label("Hello, World!")
