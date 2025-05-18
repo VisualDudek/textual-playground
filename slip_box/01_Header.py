@@ -1,3 +1,13 @@
+"""
+Demonstrates:
+- Basic Textual app structure (App, compose).
+- Header widget usage (show_clock, time_format, name).
+- Key bindings (BINDINGS).
+- Custom actions (action_toggle_header).
+- Widget querying (query_one).
+- Dynamic widget property modification (header.tall).
+"""
+
 from textual.app import App, ComposeResult
 from textual.widgets import Header
 
