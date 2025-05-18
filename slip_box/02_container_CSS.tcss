@@ -1,0 +1,8 @@
+Label {
+    color: white;
+    background: blue;
+}
+#label_2 {
+    color: red;
+    background: white;
+}
