@@ -1,3 +1,6 @@
+"""
+Use decorator on a class method to handle events.
+"""
 from textual.app import App, ComposeResult
 from textual.containers import HorizontalGroup, VerticalScroll
 from textual.widgets import Button, Digits, Footer, Header
@@ -11,12 +14,19 @@ class TimeDisplay(Digits):
 class Stopwatch(HorizontalGroup):
     """A stopwatch widget."""
 
-    def on_button_pressed(self, event: Button.Pressed) -> None:
-        """Event handler called when a button is pressed."""
-        if event.button.id == "start":
-            self.add_class("started")
-        elif event.button.id == "stop":
-            self.remove_class("started")
+    # def on_button_pressed(self, event: Button.Pressed) -> None:
+    #     """Event handler called when a button is pressed."""
+    #     if event.button.id == "start":
+    #         self.add_class("started")
+    #     elif event.button.id == "stop":
+    #         self.remove_class("started")
+    @on(Button.Pressed, "#start")
+    def start_stopwatch(self):
+        self.add_class("started")
+
+    @on(Button.Pressed, "#stop")
+    def stop_stopwatch(self):
+        self.remove_class("started")
 
     def compose(self) -> ComposeResult:
         """Create child widgets of a stopwatch."""
