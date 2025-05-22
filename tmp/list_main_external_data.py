@@ -85,6 +85,9 @@ class CustomDataTable(DataTable):
             {"$set": {"seen": True}},
         )
 
+        if mongo_client:
+            mongo_client.close()
+
     # def action_select_cursor(self):
     #     row, col = self.cursor_row, self.cursor_column
     #     value = self.get_cell_at((row, 1))
