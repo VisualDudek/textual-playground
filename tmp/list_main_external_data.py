@@ -56,6 +56,7 @@ class CustomDataTable(DataTable):
 
     def update_table(self, key):
         self.clear()
+        self.videos = DATA[key]
         for video in DATA[key]:
             # if date is today, change color
             if video.published_at.date() == date.today():
@@ -73,6 +74,16 @@ class CustomDataTable(DataTable):
         self.log(self.get_cell_at((row, col)))
         value = self.get_cell_at((row, col))
         self.update_cell_at((row, col), Text(str(value), style="bold red"))
+        id = self.videos[row]._id
+
+        mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000, server_api= ServerApi('1')) # Timeout for connection
+        db = mongo_client[MONGO_DATABASE_NAME]
+        video_collection = db[MONGO_COLLECTION_NAME]
+
+        video_collection.update_one(
+            {"_id": id},
+            {"$set": {"seen": True}},
+        )
 
     # def action_select_cursor(self):
     #     row, col = self.cursor_row, self.cursor_column
