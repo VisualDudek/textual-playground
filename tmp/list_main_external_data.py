@@ -57,6 +57,8 @@ class CustomDataTable(DataTable):
     def update_table(self, key):
         self.clear()
         self.videos = DATA[key]
+        self.key = key
+
         for video in DATA[key]:
             # if date is today, change color
             if video.published_at.date() == date.today():
@@ -65,16 +67,24 @@ class CustomDataTable(DataTable):
                 title = Text(video.title, style="bold green")
             else:
                 title = video.title
+
+            if video.seen:
+                title = Text(video.title, style="dim")
             
             row = (video.published_at, title, video.duration)
             self.add_row(*row, key=video.video_id)
 
+
     def action_style_row(self):
         row, col = self.cursor_row, self.cursor_column
-        self.log(self.get_cell_at((row, col)))
-        value = self.get_cell_at((row, col))
-        self.update_cell_at((row, col), Text(str(value), style="bold red"))
+        # self.log(self.get_cell_at((row, col)))
+        # value = self.get_cell_at((row, col))
+        # self.update_cell_at((row, col), Text(str(value), style="bold red"))
         id = self.videos[row]._id
+
+        seen = self.videos[row].seen
+        seen = not seen
+        self.videos[row].seen = seen
 
         mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000, server_api= ServerApi('1')) # Timeout for connection
         db = mongo_client[MONGO_DATABASE_NAME]
@@ -82,11 +92,13 @@ class CustomDataTable(DataTable):
 
         video_collection.update_one(
             {"_id": id},
-            {"$set": {"seen": True}},
+            {"$set": {"seen": seen}},
         )
 
         if mongo_client:
             mongo_client.close()
+
+        self.update_table(self.key)
 
     # def action_select_cursor(self):
     #     row, col = self.cursor_row, self.cursor_column
@@ -179,6 +191,7 @@ class Video:
     published_at: datetime
     url: str = field(default="N/A")
     duration: str = field(default="N/A")
+    seen: bool = field(default=False)
 
 
 if __name__ == "__main__":
