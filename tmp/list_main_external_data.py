@@ -8,7 +8,7 @@ from textual.containers import Horizontal
 from textual import on
 from rich.text import Text
 from dataclasses import dataclass, field, fields
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -56,7 +56,15 @@ class CustomDataTable(DataTable):
     def update_table(self, key):
         self.clear()
         for video in DATA[key]:
-            row = (video.published_at, video.title, video.duration)
+            # if date is today, change color
+            if video.published_at.date() == date.today():
+                title = Text(video.title, style="bold red")
+            elif video.published_at.date() == date.today() - timedelta(days=1):
+                title = Text(video.title, style="bold green")
+            else:
+                title = video.title
+            
+            row = (video.published_at, title, video.duration)
             self.add_row(*row, key=video.video_id)
 
     def action_style_row(self):
