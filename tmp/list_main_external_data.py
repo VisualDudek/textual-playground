@@ -12,6 +12,7 @@ from datetime import datetime, date, timedelta
 from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+from bson import ObjectId
 
 
 DATA = None
@@ -158,6 +159,7 @@ def load_data():
 
 @dataclass
 class Video:
+    _id: ObjectId
     title: str
     video_id: str
     published_at: datetime
