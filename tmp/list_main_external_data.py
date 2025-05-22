@@ -149,6 +149,10 @@ def load_data():
 
         data[channel_name] = videos
 
+    if mongo_client:
+        mongo_client.close()
+        print("\nMongoDB connection closed.")
+
     return data
 
 
