@@ -1,3 +1,4 @@
+import os
 import pickle
 
 from textual.app import App
@@ -8,6 +9,9 @@ from textual import on
 from rich.text import Text
 from dataclasses import dataclass, field, fields
 from datetime import datetime
+from dotenv import load_dotenv
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
 
 DATA = None
@@ -53,7 +57,7 @@ class CustomDataTable(DataTable):
         self.clear()
         for video in DATA[key]:
             row = (video.published_at, video.title, video.duration)
-            self.add_row(*row, key=video.url)
+            self.add_row(*row, key=video.video_id)
 
     def action_style_row(self):
         row, col = self.cursor_row, self.cursor_column
@@ -68,9 +72,8 @@ class CustomDataTable(DataTable):
 
     @on(DataTable.RowSelected)
     def open_url_in_browser(self, event: DataTable.RowSelected):
-        url = event.row_key
-        self.log(url)
-        self.app.open_url(url.value)
+        video_id = event.row_key.value
+        self.app.open_url(f"https://www.youtube.com/watch?v={video_id}")
         
 
 class MyApp(App):
@@ -111,10 +114,19 @@ class MyApp(App):
     
 
 def load_data():
-    with open("data.pkl", "rb") as f:
-        loaded_data = pickle.load(f)
+    # with open("data.pkl", "rb") as f:
+    #     loaded_data = pickle.load(f)
 
-    # data = { d["_id"]: d for d in loaded_data }
+    print(f"Connecting to MongoDB at {MONGO_URI}...")
+    mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000, server_api= ServerApi('1')) # Timeout for connection
+    # Ping to confirm connection
+    mongo_client.admin.command('ping') 
+    print("Successfully connected to MongoDB.")
+
+    db = mongo_client[MONGO_DATABASE_NAME]
+    video_collection = db[MONGO_COLLECTION_NAME]
+
+    loaded_data = list(db.latest_ten.find())
 
     data = dict()
     field_names = {f.name for f in fields(Video)}
@@ -142,6 +154,14 @@ class Video:
 
 
 if __name__ == "__main__":
+    # Load environment variables from .env file
+    load_dotenv()  
+
+    # --- MongoDB Configuration ---
+    MONGO_URI = os.getenv("MONGO_URI")
+    MONGO_DATABASE_NAME = "youtube_data"
+    MONGO_COLLECTION_NAME = "videos"     
+
     DATA = load_data()
     app = MyApp()
     app.run()
