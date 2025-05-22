@@ -82,9 +82,7 @@ class CustomDataTable(DataTable):
         # self.update_cell_at((row, col), Text(str(value), style="bold red"))
         id = self.videos[row]._id
 
-        seen = self.videos[row].seen
-        seen = not seen
-        self.videos[row].seen = seen
+        self.videos[row].seen = not self.videos[row].seen
 
         mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000, server_api= ServerApi('1')) # Timeout for connection
         db = mongo_client[MONGO_DATABASE_NAME]
@@ -92,7 +90,7 @@ class CustomDataTable(DataTable):
 
         video_collection.update_one(
             {"_id": id},
-            {"$set": {"seen": seen}},
+            {"$set": {"seen": self.videos[row].seen}},
         )
 
         if mongo_client:
