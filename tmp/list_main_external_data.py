@@ -3,33 +3,16 @@ import pickle
 from textual.app import App
 from textual.widgets import ListView, ListItem, Footer, Label, DataTable, Link
 from textual.binding import Binding
-from textual.containers import Horizontal, Vertical
+from textual.containers import Horizontal
 from textual import on
 from rich.text import Text
-from itertools import cycle
 from dataclasses import dataclass, field, fields
 from datetime import datetime
 
 
-DATA = {
-    "a": (4, "Joseph Schooling", "Singapore", 50.39),
-    "b": (6, "László Cseh", "Hungary", 51.14),
-    "c": (7, "Tom Shields", "United States", 51.73),
-}
-
+DATA = None
 COLUMN_HEADERS = ("Time", "Title", "Duration")
 
-ROWS = [
-    (4, "Joseph Schooling", "Singapore", 50.39),
-    (2, "Michael Phelps", "United States", 51.14),
-    (5, "Chad le Clos", "South Africa", 51.14),
-    (6, "László Cseh", "Hungary", 51.14),
-    (3, "Li Zhuhao", "China", 51.26),
-    (8, "Mehdy Metella", "France", 51.58),
-    (7, "Tom Shields", "United States", 51.73),
-    (1, "Aleksandr Sadovnikov", "Russia", 51.84),
-    (10, "Darren Burns", "Scotland", 51.84),
-]
 
 # nice trick with self.data and super() init Label
 class MyListItem(ListItem):
@@ -146,8 +129,8 @@ def load_data():
 
         data[channel_name] = videos
 
-
     return data
+
 
 @dataclass
 class Video:
