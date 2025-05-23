@@ -36,11 +36,22 @@ class CustomListView(ListView):
         Binding("enter", "select_cursor", "Select", show=False),
         Binding("k", "cursor_up", "Cursor up", show=False),
         Binding("j", "cursor_down", "Cursor down", show=False),
+        Binding("r", "load_data_from_db", "Load data from DB", show=True),
     ]
 
+    def action_load_data_from_db(self):
+        global DATA
+        DATA = load_data_from_db()
+        self.update_data()
+
     def on_mount(self):
+        self.update_data()
+
+    def update_data(self):
+        self.clear()
         for channel_name in DATA.keys():
             self.append(MyListItem(channel_name))
+
 
     
 def count_new_videos(key) -> int:
@@ -155,8 +166,10 @@ class MyApp(App):
 
     @on(ListView.Highlighted)
     def update_data_table(self, event: ListView.Highlighted):
-        self.log(event.item.data)
-        self.query_one(CustomDataTable).update_table(event.item.data)
+        self.log(event.item)
+        if event.item is not None:
+            self.log(event.item.data)
+            self.query_one(CustomDataTable).update_table(event.item.data)
 
 def is_within_last_two_days(dt: datetime) -> bool:
     now = datetime.now()
@@ -240,3 +253,6 @@ if __name__ == "__main__":
     # --- Run TUI ---
     app = MyApp()
     app.run()
+
+    # --- Save data ---
+    pickle_data(DATA)
