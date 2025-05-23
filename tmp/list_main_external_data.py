@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson import ObjectId
+from pathlib import Path
 
 
 DATA = None
@@ -229,6 +230,13 @@ if __name__ == "__main__":
     MONGO_DATABASE_NAME = "youtube_data"
     MONGO_COLLECTION_NAME = "videos"     
 
-    DATA = load_data_from_db()
+    # --- Get init data logic ---
+    file_path = Path("data.pkl")
+    if file_path.exists():
+        DATA = load_pickle_data()
+    else:
+        DATA = load_data_from_db()
+
+    # --- Run TUI ---
     app = MyApp()
     app.run()
