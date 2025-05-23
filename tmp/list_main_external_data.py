@@ -21,9 +21,13 @@ COLUMN_HEADERS = ("Time", "Title", "Duration")
 
 # nice trick with self.data and super() init Label
 class MyListItem(ListItem):
-    def __init__(self, data, label):
+    def __init__(self, channel_name):
+        self.data = channel_name
+        label = channel_name
+        number = count_new_videos(channel_name)
+        if number > 0:
+            label = f"{channel_name} ({number})"
         super().__init__(Label(label))
-        self.data = data
 
 class CustomListView(ListView):
 
@@ -35,11 +39,7 @@ class CustomListView(ListView):
 
     def on_mount(self):
         for channel_name in DATA.keys():
-            number = count_new_videos(channel_name)
-            if number > 0:
-                self.append(MyListItem(channel_name, f"{channel_name} ({number})"))
-            else:
-                self.append(MyListItem(channel_name, channel_name))
+            self.append(MyListItem(channel_name))
 
     
 def count_new_videos(key) -> int:
