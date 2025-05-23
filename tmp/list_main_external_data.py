@@ -144,6 +144,11 @@ class MyApp(App):
     def update_data_table(self, event: ListView.Highlighted):
         self.log(event.item.data)
         self.query_one(CustomDataTable).update_table(event.item.data)
+
+def is_within_last_two_days(dt: datetime) -> bool:
+    now = datetime.now()
+    two_days_ago =  now - timedelta(days=2)
+    return two_days_ago <= dt <= now
     
 
 def load_data():
@@ -159,7 +164,8 @@ def load_data():
     db = mongo_client[MONGO_DATABASE_NAME]
     video_collection = db[MONGO_COLLECTION_NAME]
 
-    loaded_data = list(db.latest_ten.find())
+    # loaded_data = list(db.latest_ten.find())
+    loaded_data = list(db.latest_20.find())
 
     data = dict()
     field_names = {f.name for f in fields(Video)}
