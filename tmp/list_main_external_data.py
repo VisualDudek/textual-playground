@@ -217,7 +217,7 @@ def load_pickle_data():
     with open("data.pkl", "rb") as f:
         loaded_data = pickle.load(f)
 
-    return load_pickle_data
+    return loaded_data
     
 
 if __name__ == "__main__":
