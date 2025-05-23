@@ -75,7 +75,7 @@ class CustomDataTable(DataTable):
             # if date is today, change color
             if video.published_at.date() == date.today():
                 title = Text(video.title, style="bold red")
-            elif video.published_at.date() == date.today() - timedelta(days=1):
+            elif video.published_at.date() >= date.today() - timedelta(days=2):
                 title = Text(video.title, style="bold green")
             else:
                 title = video.title
@@ -160,7 +160,7 @@ class MyApp(App):
 def is_within_last_two_days(dt: datetime) -> bool:
     now = datetime.now()
     two_days_ago =  now - timedelta(days=2)
-    return two_days_ago <= dt <= now
+    return two_days_ago.date() <= dt.date() 
     
 
 def load_data():
