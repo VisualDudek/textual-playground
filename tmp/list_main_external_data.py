@@ -163,7 +163,7 @@ def is_within_last_two_days(dt: datetime) -> bool:
     return two_days_ago.date() <= dt.date() 
     
 
-def load_data():
+def load_data_from_db():
     # with open("data.pkl", "rb") as f:
     #     loaded_data = pickle.load(f)
 
@@ -209,6 +209,16 @@ class Video:
     duration: str = field(default="N/A")
     seen: bool = field(default=False)
 
+def pickle_data(data):
+    with open("data.pkl", "wb") as f:
+        pickle.dump(data, f)
+
+def load_pickle_data():
+    with open("data.pkl", "rb") as f:
+        loaded_data = pickle.load(f)
+
+    return load_pickle_data
+    
 
 if __name__ == "__main__":
     # Load environment variables from .env file
@@ -219,6 +229,6 @@ if __name__ == "__main__":
     MONGO_DATABASE_NAME = "youtube_data"
     MONGO_COLLECTION_NAME = "videos"     
 
-    DATA = load_data()
+    DATA = load_data_from_db()
     app = MyApp()
     app.run()
